@@ -27,7 +27,12 @@ public class PacienteEntity {
     private String latitud;
     private String longitud;
 
+
     public PacienteEntity() {
+    }
+
+    public PacienteEntity(Long id) {
+        this.id = id;   
     }
 
     public PacienteEntity(Long id, String nombre, String apellido, String documento, String tipoDocumento, String direccion, String telefono, String nombreFamiliar, String telefonoFamiliar, String parentescoFamiliar, String barrio, String conjunto, String latitud, String longitud) {

@@ -19,34 +19,33 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Service.PacienteService;
 
-
 @RestController
 @RequestMapping("/paciente")
 public class PacienteController {
-    
+
     @Autowired
     private PacienteService pacienteService;
 
-    //http://localhost:8080/paciente/registrar-paciente
+    //http://localhost:8081/paciente/registrar-paciente
     @PostMapping("/registrar-paciente")
-    public ResponseEntity<?> registrarPaciente(@RequestBody PacienteEntity paciente){
-        if(pacienteService.existePaciente(paciente.getDocumento())){
+    public ResponseEntity<?> registrarPaciente(@RequestBody PacienteEntity paciente) {
+        if (pacienteService.existePaciente(paciente.getDocumento())) {
             return ResponseEntity.badRequest().body("El paciente ya existe");
         }
         pacienteService.registrarPaciente(paciente);
         return ResponseEntity.ok("Paciente registrado");
     }
-    
-    //http://localhost:8080/paciente?limit=10&page=0
+
+    //http://localhost:8081/paciente?limit=10&page=0
     @GetMapping("")
-    public ResponseEntity<?> obtenerPacientes(@RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "0") int page)  {
-    try {
+    public ResponseEntity<?> obtenerPacientes(@RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "0") int page) {
+        try {
             Pageable pageable = PageRequest.of(page, limit);
             Page<PacienteEntity> patientsPage = pacienteService.obtenerPacientes(pageable);
 
             return ResponseEntity.ok(Map.of(
-                "content", patientsPage.getContent(),
-                "totalElements", patientsPage.getTotalElements()
+                    "content", patientsPage.getContent(),
+                    "totalElements", patientsPage.getTotalElements()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
