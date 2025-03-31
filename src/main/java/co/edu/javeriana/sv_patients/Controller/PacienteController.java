@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
+import co.edu.javeriana.sv_patients.DTO.PacienteRegistroDTO;
 import co.edu.javeriana.sv_patients.Service.PacienteService;
 
 @RestController
@@ -28,20 +28,23 @@ public class PacienteController {
 
     //http://localhost:8081/paciente/registrar-paciente
     @PostMapping("/registrar-paciente")
-    public ResponseEntity<?> registrarPaciente(@RequestBody PacienteEntity paciente) {
-        if (pacienteService.existePaciente(paciente.getDocumento())) {
+    public ResponseEntity<?> registrarPaciente(@RequestBody PacienteRegistroDTO dto) {
+        if (pacienteService.existePaciente(dto.getDocumento())) {
             return ResponseEntity.badRequest().body("El paciente ya existe");
         }
-        pacienteService.registrarPaciente(paciente);
-        return ResponseEntity.ok("Paciente registrado");
+
+        pacienteService.registrarConTratamientosYProcedimientos(dto);
+        return ResponseEntity.ok("Paciente registrado con tratamientos y procedimientos");
     }
+
 
     //http://localhost:8081/paciente?limit=10&page=0
     @GetMapping("")
-    public ResponseEntity<?> obtenerPacientes(@RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<?> obtenerPacientes(@RequestParam(defaultValue = "10") int limit,
+                                            @RequestParam(defaultValue = "0") int page) {
         try {
             Pageable pageable = PageRequest.of(page, limit);
-            Page<PacienteEntity> patientsPage = pacienteService.obtenerPacientes(pageable);
+            Page<PacienteRegistroDTO> patientsPage = pacienteService.obtenerPacientesConDetalles(pageable);
 
             return ResponseEntity.ok(Map.of(
                     "content", patientsPage.getContent(),
@@ -53,4 +56,5 @@ public class PacienteController {
                     .body("An unexpected error occurred: " + e.getMessage());
         }
     }
+
 }
