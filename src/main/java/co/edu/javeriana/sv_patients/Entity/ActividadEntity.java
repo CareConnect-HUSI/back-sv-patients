@@ -1,0 +1,91 @@
+package co.edu.javeriana.sv_patients.Entity;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "actividad")
+public class ActividadEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tipo_actividad_id", nullable = false)
+    private TipoActividadEntity tipoActividad;
+
+
+    private String descripcion;
+    private Integer cantidad;
+    @Column(name = "fecha_registro", updatable = false, insertable = false)
+    @CreationTimestamp
+    private LocalDateTime fechaRegistro;
+    private String usuarioRegistra;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public TipoActividadEntity getTipoActividad() {
+        return tipoActividad;
+    }
+
+    public void setTipoActividad(TipoActividadEntity tipoActividad) {
+        this.tipoActividad = tipoActividad;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    public String getUsuarioRegistra() {
+        return usuarioRegistra;
+    }
+
+    public void setUsuarioRegistra(String usuarioRegistra) {
+        this.usuarioRegistra = usuarioRegistra; 
+    }
+}
