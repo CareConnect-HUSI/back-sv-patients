@@ -1,9 +1,16 @@
-/*package co.edu.javeriana.sv_patients.Entity;
+package co.edu.javeriana.sv_patients.Entity;
+import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -12,32 +19,19 @@ public class ActividadEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String nombre;
-
-    private Long tipo_actividad_id;
+    private String name;
     
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tipo_actividad_id", nullable = false)
+    private TipoActividadEntity tipoActividad;
+
+
     private String descripcion;
-
     private Integer cantidad;
-
-    private String fecha_registro;
-
-    private String usuario_registra;
-
-    public ActividadEntity() {
-    }
-
-    public ActividadEntity(Long id, String nombre, Long tipo_actividad_id, String descripcion, Integer cantidad,
-            String fecha_registro, String usuario_registra) {
-        this.id = id;
-        this.nombre = nombre;
-        this.tipo_actividad_id = tipo_actividad_id;
-        this.descripcion = descripcion;
-        this.cantidad = cantidad;
-        this.fecha_registro = fecha_registro;
-        this.usuario_registra = usuario_registra;
-    }
+    @Column(name = "fecha_registro", updatable = false, insertable = false)
+    @CreationTimestamp
+    private LocalDateTime fechaRegistro;
+    private String usuarioRegistra;
 
     public Long getId() {
         return id;
@@ -47,20 +41,20 @@ public class ActividadEntity {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Long getTipo_actividad_id() {
-        return tipo_actividad_id;
+    public TipoActividadEntity getTipoActividad() {
+        return tipoActividad;
     }
 
-    public void setTipo_actividad_id(Long tipo_actividad_id) {
-        this.tipo_actividad_id = tipo_actividad_id;
+    public void setTipoActividad(TipoActividadEntity tipoActividad) {
+        this.tipoActividad = tipoActividad;
     }
 
     public String getDescripcion() {
@@ -79,16 +73,19 @@ public class ActividadEntity {
         this.cantidad = cantidad;
     }
 
-    public String getFecha_registro() {
-        return fecha_registro;
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
     }
 
-    public void setFecha_registro(String fecha_registro) {
-        this.fecha_registro = fecha_registro;
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
-    public String getUsuario_registra() {
-        return usuario_registra;
+    public String getUsuarioRegistra() {
+        return usuarioRegistra;
+    }
+
+    public void setUsuarioRegistra(String usuarioRegistra) {
+        this.usuarioRegistra = usuarioRegistra; 
     }
 }
-*/
