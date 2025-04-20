@@ -1,161 +1,178 @@
 package co.edu.javeriana.sv_patients.Entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "paciente")
 public class PacienteEntity {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
     private String apellido;
-    private String documento;
-    private String tipoDocumento;
     private String direccion;
     private String telefono;
-    private String nombreFamiliar;
-    private String telefonoFamiliar;
-    private String parentescoFamiliar;
+    private String numero_identificacion;
+    private String nombre_acudiente;
+    private String parentezco_acudiente;
+    private String telefono_acudiente;
     private String barrio;
     private String conjunto;
-    private String latitud;
-    private String longitud;
+    private String localidad;
+    private Double latitud;
+    private Double longitud;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tipo_identificacion_id")
+    private TipoIdentificacionEntity tipoIdentificacion;
 
     public PacienteEntity() {
     }
 
-    public PacienteEntity(Long id, String nombre, String apellido, String documento, String tipoDocumento, String direccion, String telefono, String nombreFamiliar, String telefonoFamiliar, String parentescoFamiliar, String barrio, String conjunto, String latitud, String longitud) {
+    public PacienteEntity(Long id, String nombre, String apellido, String direccion, String telefono,
+            Long tipo_identificacion_id, String numero_identificacion, String nombre_acudiente,
+            String parentezco_acudiente, String telefono_acudiente, String barrio, String conjunto,
+            String localidad, Double latitud, Double longitud) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.documento = documento;
-        this.tipoDocumento = tipoDocumento;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.nombreFamiliar = nombreFamiliar;
-        this.telefonoFamiliar = telefonoFamiliar;
-        this.parentescoFamiliar = parentescoFamiliar;
+        this.numero_identificacion = numero_identificacion;
+        this.nombre_acudiente = nombre_acudiente;
+        this.parentezco_acudiente = parentezco_acudiente;
+        this.telefono_acudiente = telefono_acudiente;
         this.barrio = barrio;
         this.conjunto = conjunto;
+        this.localidad = localidad;
         this.latitud = latitud;
         this.longitud = longitud;
     }
 
     public Long getId() {
-        return this.id;
-    }
-
-    public String getNombre() {
-        return this.nombre;
-    }
-
-    public String getApellido() {
-        return this.apellido;
-    }
-
-    public String getDocumento() {
-        return this.documento;
-    }
-
-    public String getTipoDocumento() {
-        return this.tipoDocumento;
-    }
-
-    public String getDireccion() {
-        return this.direccion;
-    }
-
-    public String getTelefono() {
-        return this.telefono;
-    }
-
-    public String getNombreFamiliar() {
-        return this.nombreFamiliar;
-    }
-
-    public String getTelefonoFamiliar() {
-        return this.telefonoFamiliar;
-    }
-
-    public String getParentescoFamiliar() {
-        return this.parentescoFamiliar;
-    }
-
-    public String getBarrio() {
-        return this.barrio;
-    }
-
-    public String getConjunto() {
-        return this.conjunto;
-    }
-
-    public String getLatitud() {
-        return this.latitud;
-    }
-
-    public String getLongitud() {
-        return this.longitud;
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
     }
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
 
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public void setTipoDocumento(String tipoDocumento) {
-        this.tipoDocumento = tipoDocumento;
+    public String getDireccion() {
+        return direccion;
     }
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
-    public void setNombreFamiliar(String nombreFamiliar) {
-        this.nombreFamiliar = nombreFamiliar;
+    public TipoIdentificacionEntity getTipoIdentificacion() {
+        return tipoIdentificacion;
     }
 
-    public void setTelefonoFamiliar(String telefonoFamiliar) {
-        this.telefonoFamiliar = telefonoFamiliar;
+    public void setTipoIdentificacion(TipoIdentificacionEntity tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
     }
 
-    public void setParentescoFamiliar(String parentescoFamiliar) {
-        this.parentescoFamiliar = parentescoFamiliar;
+    public String getNumero_identificacion() {
+        return numero_identificacion;
+    }
+
+    public void setNumero_identificacion(String numero_identificacion) {
+        this.numero_identificacion = numero_identificacion;
+    }
+
+    public String getNombre_acudiente() {
+        return nombre_acudiente;
+    }
+
+    public void setNombre_acudiente(String nombre_acudiente) {
+        this.nombre_acudiente = nombre_acudiente;
+    }
+
+    public String getParentezco_acudiente() {
+        return parentezco_acudiente;
+    }
+
+    public void setParentezco_acudiente(String parentezco_acudiente) {
+        this.parentezco_acudiente = parentezco_acudiente;
+    }
+
+    public String getTelefono_acudiente() {
+        return telefono_acudiente;
+    }
+
+    public void setTelefono_acudiente(String telefono_acudiente) {
+        this.telefono_acudiente = telefono_acudiente;
+    }
+
+    public String getBarrio() {
+        return barrio;
     }
 
     public void setBarrio(String barrio) {
         this.barrio = barrio;
     }
 
+    public String getConjunto() {
+        return conjunto;
+    }
+
     public void setConjunto(String conjunto) {
         this.conjunto = conjunto;
     }
 
-    public void setLatitud(String latitud) {
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public Double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(Double latitud) {
         this.latitud = latitud;
     }
 
-    public void setLongitud(String longitud) {
+    public Double getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(Double longitud) {
         this.longitud = longitud;
     }
 }
