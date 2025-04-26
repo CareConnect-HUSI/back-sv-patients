@@ -1,5 +1,7 @@
 package co.edu.javeriana.sv_patients.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,7 +22,7 @@ public class PacienteEntity {
     private String apellido;
     private String direccion;
     private String telefono;
-    private String numero_identificacion;
+    private String numeroIdentificacion;
     private String nombre_acudiente;
     private String parentezco_acudiente;
     private String telefono_acudiente;
@@ -33,6 +36,9 @@ public class PacienteEntity {
     @JoinColumn(name = "tipo_identificacion_id")
     private TipoIdentificacionEntity tipoIdentificacion;
 
+    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
+    private List<ActividadPacienteVisita> actividades;
+
     public PacienteEntity() {
     }
 
@@ -45,7 +51,7 @@ public class PacienteEntity {
         this.apellido = apellido;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.numero_identificacion = numero_identificacion;
+        this.numeroIdentificacion = numero_identificacion;
         this.nombre_acudiente = nombre_acudiente;
         this.parentezco_acudiente = parentezco_acudiente;
         this.telefono_acudiente = telefono_acudiente;
@@ -105,11 +111,11 @@ public class PacienteEntity {
     }
 
     public String getNumero_identificacion() {
-        return numero_identificacion;
+        return numeroIdentificacion;
     }
 
     public void setNumero_identificacion(String numero_identificacion) {
-        this.numero_identificacion = numero_identificacion;
+        this.numeroIdentificacion = numero_identificacion;
     }
 
     public String getNombre_acudiente() {
@@ -174,5 +180,13 @@ public class PacienteEntity {
 
     public void setLongitud(Double longitud) {
         this.longitud = longitud;
+    }
+
+    public List<ActividadPacienteVisita> getActividades() {
+        return actividades;
+    }
+
+    public void setActividades(List<ActividadPacienteVisita> actividades) {
+        this.actividades = actividades;
     }
 }
