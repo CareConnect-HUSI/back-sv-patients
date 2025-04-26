@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.edu.javeriana.sv_patients.Entity.ActividadEntity;
+import co.edu.javeriana.sv_patients.Entity.ActividadPacienteVisita;
 import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Entity.TipoIdentificacionEntity;
+import co.edu.javeriana.sv_patients.Repository.ActividadPacienteVisitaRepository;
+import co.edu.javeriana.sv_patients.Repository.ActividadRepository;
 import co.edu.javeriana.sv_patients.Repository.PacienteRepository;
 import co.edu.javeriana.sv_patients.Repository.TipoIdentificacionRepository;
 import co.edu.javeriana.sv_patients.Service.PacienteService;
@@ -32,8 +36,14 @@ public class PacienteController {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    @Autowired
+    private ActividadPacienteVisitaRepository actividadPacienteVisitaRepository;
+
+    @Autowired
+    private ActividadRepository actividadRepository;
+
     //http://localhost:8081/pacientes/registrar-paciente
-    @PostMapping("/registrar-paciente")
+    /*@PostMapping("/registrar-paciente")
     public ResponseEntity<PacienteEntity> registrar(@RequestBody PacienteEntity paciente) {
 
         if (paciente.getTipoIdentificacion() == null || paciente.getTipoIdentificacion().getName() == null) {
@@ -47,8 +57,50 @@ public class PacienteController {
         paciente.setTipoIdentificacion(tipo);
 
         PacienteEntity pacienteGuardado = pacienteRepository.save(paciente);
+
         return ResponseEntity.ok(pacienteGuardado);
+    }*/
+
+    // http://localhost:8081/pacientes/registrar-paciente
+    @PostMapping("/registrar-paciente")
+    public ResponseEntity<?> registrar(@RequestBody PacienteEntity paciente) {
+        if (paciente.getTipoIdentificacion() == null || paciente.getTipoIdentificacion().getId() == null) {
+            return ResponseEntity.badRequest().body("El campo 'tipoIdentificacion.id' es requerido");
+        }
+
+        TipoIdentificacionEntity tipo = tipoIdentificacionRepository.findById(paciente.getTipoIdentificacion().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Tipo de identificación no válido"));
+        paciente.setTipoIdentificacion(tipo);
+
+        boolean yaExiste = pacienteRepository.existsByTipoIdentificacionAndNumeroIdentificacion(
+                tipo, paciente.getNumero_identificacion());
+        if (yaExiste) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Ya existe un paciente con ese número y tipo de identificación");
+        }
+
+        PacienteEntity pacienteGuardado = pacienteRepository.save(paciente);
+
+        if (paciente.getActividades() != null) {
+            for (ActividadPacienteVisita actividad : paciente.getActividades()) {
+                actividad.setPaciente(pacienteGuardado);
+
+                ActividadEntity actividadEntity = actividadRepository.findById(
+                        actividad.getActividad().getId()
+                ).orElseThrow(() ->
+                        new RuntimeException("Actividad con ID " + actividad.getActividad().getId() + " no encontrada")
+                );
+
+                actividad.setActividad(actividadEntity);
+
+                actividadPacienteVisitaRepository.save(actividad);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteGuardado);
     }
+
+
 
     //http://localhost:8081/pacientes
     @GetMapping()

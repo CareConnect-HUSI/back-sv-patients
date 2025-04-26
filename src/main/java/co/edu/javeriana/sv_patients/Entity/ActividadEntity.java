@@ -1,8 +1,10 @@
 package co.edu.javeriana.sv_patients.Entity;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,6 +28,8 @@ public class ActividadEntity {
     @JoinColumn(name = "tipo_actividad_id", nullable = false)
     private TipoActividadEntity tipoActividad;
 
+    @OneToMany(mappedBy = "actividad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ActividadPacienteVisita> actividades;
 
     private String descripcion;
     private Integer cantidad;
@@ -87,5 +92,13 @@ public class ActividadEntity {
 
     public void setUsuarioRegistra(String usuarioRegistra) {
         this.usuarioRegistra = usuarioRegistra; 
+    }
+
+    public List<ActividadPacienteVisita> getActividades() {
+        return actividades;
+    }
+
+    public void setActividades(List<ActividadPacienteVisita> actividades) {
+        this.actividades = actividades;
     }
 }
