@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +14,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.edu.javeriana.sv_patients.DTO.ActividadDTO;
+import co.edu.javeriana.sv_patients.DTO.PacienteDTO;
+import co.edu.javeriana.sv_patients.DTO.TipoIdentificacionDTO;
+import co.edu.javeriana.sv_patients.Entity.ActividadEntity;
+import co.edu.javeriana.sv_patients.Entity.ActividadPacienteVisita;
 import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Entity.TipoIdentificacionEntity;
+import co.edu.javeriana.sv_patients.Repository.ActividadPacienteVisitaRepository;
+import co.edu.javeriana.sv_patients.Repository.ActividadRepository;
 import co.edu.javeriana.sv_patients.Repository.PacienteRepository;
 import co.edu.javeriana.sv_patients.Repository.TipoIdentificacionRepository;
 import co.edu.javeriana.sv_patients.Service.PacienteService;
@@ -32,41 +43,110 @@ public class PacienteController {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    //http://localhost:8081/pacientes/registrar-paciente
-    @PostMapping("/registrar-paciente")
-    public ResponseEntity<PacienteEntity> registrar(@RequestBody PacienteEntity paciente) {
+    @Autowired
+    private ActividadRepository actividadRepository;
 
-        if (paciente.getTipoIdentificacion() == null || paciente.getTipoIdentificacion().getName() == null) {
-            throw new IllegalArgumentException("El campo 'tipoIdentificacion.nombre' es requerido");
+    @Autowired
+    private ActividadPacienteVisitaRepository actividadPacienteVisitaRepository;
+
+    // http://localhost:8081/pacientes/registrar-paciente
+    @PostMapping("/registrar-paciente")
+    public ResponseEntity<?> registrar(@RequestBody PacienteEntity paciente) {
+        if (paciente.getTipoIdentificacion() == null || paciente.getTipoIdentificacion().getId() == null) {
+            return ResponseEntity.badRequest().body("El campo 'tipoIdentificacion.id' es requerido");
         }
 
-        TipoIdentificacionEntity tipo = tipoIdentificacionRepository.findByName(paciente.getTipoIdentificacion().getName());
-        
-        if (tipo == null) throw new IllegalArgumentException("Tipo de identificación no válido");
-
+        TipoIdentificacionEntity tipo = tipoIdentificacionRepository.findById(paciente.getTipoIdentificacion().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Tipo de identificación no válido"));
         paciente.setTipoIdentificacion(tipo);
 
+        boolean yaExiste = pacienteRepository.existsByTipoIdentificacionAndNumeroIdentificacion(
+                tipo, paciente.getNumero_identificacion());
+        if (yaExiste) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Ya existe un paciente con ese número y tipo de identificación");
+        }
+
         PacienteEntity pacienteGuardado = pacienteRepository.save(paciente);
-        return ResponseEntity.ok(pacienteGuardado);
+
+        if (paciente.getActividades() != null) {
+            for (ActividadPacienteVisita actividad : paciente.getActividades()) {
+                actividad.setPaciente(pacienteGuardado);
+
+                ActividadEntity actividadEntity = actividadRepository.findById(
+                        actividad.getActividad().getId()
+                ).orElseThrow(() ->
+                        new RuntimeException("Actividad con ID " + actividad.getActividad().getId() + " no encontrada")
+                );
+
+                actividad.setActividad(actividadEntity);
+
+                actividadPacienteVisitaRepository.save(actividad);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteGuardado);
     }
 
     //http://localhost:8081/pacientes
-    @GetMapping()
-    public ResponseEntity<List<PacienteEntity>> obtenerTodosLosPacientes() {
-        List<PacienteEntity> pacientes = pacienteRepository.findAll();
+    @GetMapping
+    public ResponseEntity<Page<PacienteEntity>> obtenerPacientesPaginados(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PacienteEntity> pacientes = pacienteRepository.findAll(pageable);
         return ResponseEntity.ok(pacientes);
     }
 
     //http://localhost:8081/pacientes/1
-    @GetMapping("/pacientes/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long id) {
-        Optional<PacienteEntity> paciente = pacienteRepository.findById(id);
-        if (paciente.isPresent()) {
-            return ResponseEntity.ok(paciente.get());
+        Optional<PacienteEntity> pacienteOpt = pacienteRepository.findById(id);
+        if (pacienteOpt.isPresent()) {
+            PacienteEntity paciente = pacienteOpt.get();
+            paciente.getActividades().size();
+            
+            PacienteDTO pacienteDTO = new PacienteDTO();
+            pacienteDTO.setId(paciente.getId());
+            pacienteDTO.setNombre(paciente.getNombre());
+            pacienteDTO.setApellido(paciente.getApellido());
+            pacienteDTO.setDireccion(paciente.getDireccion());
+            pacienteDTO.setTelefono(paciente.getTelefono());
+            pacienteDTO.setNumeroIdentificacion(paciente.getNumero_identificacion());
+            pacienteDTO.setNombreAcudiente(paciente.getNombre_acudiente());
+            pacienteDTO.setParentezcoAcudiente(paciente.getParentezco_acudiente());
+            pacienteDTO.setTelefonoAcudiente(paciente.getTelefono_acudiente());
+            pacienteDTO.setBarrio(paciente.getBarrio());
+            pacienteDTO.setConjunto(paciente.getConjunto());
+            pacienteDTO.setLocalidad(paciente.getLocalidad());
+            pacienteDTO.setLatitud(paciente.getLatitud());
+            pacienteDTO.setLongitud(paciente.getLongitud());
+
+            TipoIdentificacionDTO tipoDTO = new TipoIdentificacionDTO();
+            tipoDTO.setId(paciente.getTipoIdentificacion().getId());
+            tipoDTO.setName(paciente.getTipoIdentificacion().getName());
+            pacienteDTO.setTipoIdentificacion(tipoDTO);
+
+            List<ActividadDTO> actividades = paciente.getActividades().stream().map(actividad -> {
+                ActividadDTO act = new ActividadDTO();
+                act.setNombreActividad(actividad.getActividad().getName());
+                act.setDosis(actividad.getDosis());
+                act.setFrecuencia(actividad.getFrecuencia());
+                act.setDiasTratamiento(actividad.getDiasTratamiento());
+                act.setFechaInicio(actividad.getFechaInicio());
+                act.setFechaFin(actividad.getFechaFin());
+                act.setHora(actividad.getHora());
+                return act;
+            }).toList();
+
+            pacienteDTO.setActividades(actividades);
+
+            return ResponseEntity.ok(pacienteDTO);
+
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con id: " + id);
         }
     }
-
 }
 
