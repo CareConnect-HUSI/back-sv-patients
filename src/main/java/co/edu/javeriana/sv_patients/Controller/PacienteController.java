@@ -2,11 +2,17 @@ package co.edu.javeriana.sv_patients.Controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import org.springframework.web.client.RestTemplate;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,6 +72,44 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Ya existe un paciente con ese número y tipo de identificación");
         }
+
+        // Enviar la solicitud HTTP al servicio de geocodificación
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            // Crear el JSON de la solicitud
+            Map<String, String> geocodeRequest = Map.of(
+                    "direccion", paciente.getDireccion(),
+                    "conjunto", paciente.getConjunto(),
+                    "barrio", paciente.getBarrio(),
+                    "ciudad", "Bogotá");
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            HttpEntity<Map<String, String>> entity = new HttpEntity<>(geocodeRequest, headers);
+
+            // Hacer la solicitud POST a la URL geocode
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    "http://0.0.0.0:8001/geocode", HttpMethod.POST, entity, Map.class);
+
+            // Verificar si la respuesta tiene latitud y longitud
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                Map<String, Object> responseBody = response.getBody();
+                Double latitud = (Double) responseBody.get("latitud");
+                Double longitud = (Double) responseBody.get("longitud");
+
+                // Actualizar la entidad enfermera con los valores de latitud y longitud
+                paciente.setLatitud(latitud);
+                paciente.setLongitud(longitud);
+            } else {
+                throw new IllegalArgumentException("No se pudo obtener latitud y longitud de la geocodificación.");
+            }
+        } catch (Exception e) {
+            // Manejo de excepciones si la solicitud falla
+            System.err.println("Error al hacer la solicitud de geocodificación: " + e.getMessage());
+            throw new IllegalArgumentException("Error al obtener latitud y longitud.");
+        }
+
 
         PacienteEntity pacienteGuardado = pacienteRepository.save(paciente);
 
