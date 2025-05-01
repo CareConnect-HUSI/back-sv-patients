@@ -17,6 +17,7 @@ public class PacienteDTO {
     private String localidad;
     private Double latitud;
     private Double longitud;
+    private String estado;
     private TipoIdentificacionDTO tipoIdentificacion;
     private List<ActividadDTO> actividades;
 
@@ -27,7 +28,7 @@ public class PacienteDTO {
             String numeroIdentificacion, String nombreAcudiente, String parentezcoAcudiente,
             String telefonoAcudiente, String barrio, String conjunto, String localidad,
             Double latitud, Double longitud, TipoIdentificacionDTO tipoIdentificacion,
-            List<ActividadDTO> actividades) {
+            List<ActividadDTO> actividades, String estado) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -44,6 +45,7 @@ public class PacienteDTO {
         this.longitud = longitud;
         this.tipoIdentificacion = tipoIdentificacion;
         this.actividades = actividades;
+        this.estado = estado;
     }
 
     public Long getId() {
@@ -172,5 +174,13 @@ public class PacienteDTO {
 
     public void setActividades(List<ActividadDTO> actividades) {
         this.actividades = actividades;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

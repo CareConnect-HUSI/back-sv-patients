@@ -34,7 +34,9 @@ public class PacienteEntity {
     private String localidad;
     private Double latitud;
     private Double longitud;
+    private String estado;
 
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tipo_identificacion_id")
     private TipoIdentificacionEntity tipoIdentificacion;
@@ -49,7 +51,7 @@ public class PacienteEntity {
     public PacienteEntity(Long id, String nombre, String apellido, String direccion, String telefono,
             Long tipo_identificacion_id, String numero_identificacion, String nombre_acudiente,
             String parentezco_acudiente, String telefono_acudiente, String barrio, String conjunto,
-            String localidad, Double latitud, Double longitud) {
+            String localidad, Double latitud, Double longitud, String estado) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -64,6 +66,7 @@ public class PacienteEntity {
         this.localidad = localidad;
         this.latitud = latitud;
         this.longitud = longitud;
+        this.estado = estado;
     }
 
     public Long getId() {
@@ -192,5 +195,13 @@ public class PacienteEntity {
 
     public void setActividades(List<ActividadPacienteVisita> actividades) {
         this.actividades = actividades;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }
