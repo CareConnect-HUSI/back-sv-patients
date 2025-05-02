@@ -2,6 +2,7 @@ package co.edu.javeriana.sv_patients.Controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.javeriana.sv_patients.Entity.ActividadPacienteVisita;
+import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
+import co.edu.javeriana.sv_patients.Repository.ActividadPacienteVisitaRepository;
+import co.edu.javeriana.sv_patients.Repository.PacienteRepository;
 import co.edu.javeriana.sv_patients.Service.ActividadPacienteVisitaService;
 
 @RestController
@@ -24,6 +28,11 @@ public class ActividadPacienteVisitaController {
     @Autowired
     private ActividadPacienteVisitaService actividadPacienteVisitaService;
 
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private ActividadPacienteVisitaRepository actividadPacienteVisitaRepository;
 
     //http://localhost:8081/actividad-paciente-visita/registrar
     @PostMapping("/registrar")
@@ -70,4 +79,26 @@ public class ActividadPacienteVisitaController {
         actividadPacienteVisitaService.eliminarActividadPacienteVisita(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/por-documento/{documento}")
+public ResponseEntity<?> obtenerActividadesPorDocumento(@PathVariable String documento) {
+    Optional<PacienteEntity> pacienteOpt = pacienteRepository.findByNumeroIdentificacion(documento);
+    if (pacienteOpt.isPresent()) {
+        PacienteEntity paciente = pacienteOpt.get();
+        List<ActividadPacienteVisita> actividades = actividadPacienteVisitaRepository.findByPacienteId(paciente.getId());
+
+        List<Map<String, Object>> response = actividades.stream().map(a -> Map.of(
+            "nombreActividad", (Object) a.getActividad().getName(),
+            "dosis", (Object) a.getDosis(),
+            "frecuencia", (Object) a.getFrecuencia(),
+            "diasTratamiento", (Object) a.getDiasTratamiento(),
+            "pacienteNombre", (Object) (paciente.getNombre() + " " + paciente.getApellido())
+        )).toList();
+
+        return ResponseEntity.ok(response);
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado");
+    }
+}
+
 }

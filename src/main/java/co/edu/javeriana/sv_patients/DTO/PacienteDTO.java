@@ -12,6 +12,7 @@ public class PacienteDTO {
     private String nombreAcudiente;
     private String parentezcoAcudiente;
     private String telefonoAcudiente;
+    private String telefonoAcudiente2;
     private String barrio;
     private String conjunto;
     private String localidad;
@@ -26,7 +27,7 @@ public class PacienteDTO {
     
     public PacienteDTO(Long id, String nombre, String apellido, String direccion, String telefono,
             String numeroIdentificacion, String nombreAcudiente, String parentezcoAcudiente,
-            String telefonoAcudiente, String barrio, String conjunto, String localidad,
+            String telefonoAcudiente, String telefono_acudiente2, String barrio, String conjunto, String localidad,
             Double latitud, Double longitud, TipoIdentificacionDTO tipoIdentificacion,
             List<ActividadDTO> actividades, String estado) {
         this.id = id;
@@ -36,7 +37,7 @@ public class PacienteDTO {
         this.telefono = telefono;
         this.numeroIdentificacion = numeroIdentificacion;
         this.nombreAcudiente = nombreAcudiente;
-        this.parentezcoAcudiente = parentezcoAcudiente;
+        this.telefonoAcudiente2 = telefono_acudiente2;
         this.telefonoAcudiente = telefonoAcudiente;
         this.barrio = barrio;
         this.conjunto = conjunto;
@@ -104,12 +105,12 @@ public class PacienteDTO {
         this.nombreAcudiente = nombreAcudiente;
     }
 
-    public String getParentezcoAcudiente() {
-        return parentezcoAcudiente;
+    public String getTelefonoAcudiente2() {
+        return telefonoAcudiente2;
     }
 
-    public void setParentezcoAcudiente(String parentezcoAcudiente) {
-        this.parentezcoAcudiente = parentezcoAcudiente;
+    public void setTelefonoAcudiente2(String telefonoAcudiente2) {
+        this.telefonoAcudiente2 = telefonoAcudiente2;
     }
 
     public String getTelefonoAcudiente() {

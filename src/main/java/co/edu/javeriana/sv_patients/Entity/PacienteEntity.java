@@ -27,8 +27,8 @@ public class PacienteEntity {
     private String telefono;
     private String numeroIdentificacion;
     private String nombre_acudiente;
-    private String parentezco_acudiente;
     private String telefono_acudiente;
+    private String telefono_acudiente2;
     private String barrio;
     private String conjunto;
     private String localidad;
@@ -50,7 +50,7 @@ public class PacienteEntity {
 
     public PacienteEntity(Long id, String nombre, String apellido, String direccion, String telefono,
             Long tipo_identificacion_id, String numero_identificacion, String nombre_acudiente,
-            String parentezco_acudiente, String telefono_acudiente, String barrio, String conjunto,
+            String telefono_acudiente2, String telefono_acudiente, String barrio, String conjunto,
             String localidad, Double latitud, Double longitud, String estado) {
         this.id = id;
         this.nombre = nombre;
@@ -59,8 +59,8 @@ public class PacienteEntity {
         this.telefono = telefono;
         this.numeroIdentificacion = numero_identificacion;
         this.nombre_acudiente = nombre_acudiente;
-        this.parentezco_acudiente = parentezco_acudiente;
         this.telefono_acudiente = telefono_acudiente;
+        this.telefono_acudiente2 = telefono_acudiente2;
         this.barrio = barrio;
         this.conjunto = conjunto;
         this.localidad = localidad;
@@ -133,20 +133,20 @@ public class PacienteEntity {
         this.nombre_acudiente = nombre_acudiente;
     }
 
-    public String getParentezco_acudiente() {
-        return parentezco_acudiente;
-    }
-
-    public void setParentezco_acudiente(String parentezco_acudiente) {
-        this.parentezco_acudiente = parentezco_acudiente;
-    }
-
     public String getTelefono_acudiente() {
         return telefono_acudiente;
     }
 
     public void setTelefono_acudiente(String telefono_acudiente) {
         this.telefono_acudiente = telefono_acudiente;
+    }
+
+    public String getTelefono_acudiente2() {
+        return telefono_acudiente2;
+    }
+
+    public void setTelefono_acudiente2(String telefono_acudiente2) {
+        this.telefono_acudiente2 = telefono_acudiente2;
     }
 
     public String getBarrio() {

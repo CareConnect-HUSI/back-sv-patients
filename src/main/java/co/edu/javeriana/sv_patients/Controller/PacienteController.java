@@ -1,10 +1,8 @@
 package co.edu.javeriana.sv_patients.Controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
-import org.springframework.web.client.RestTemplate;
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import co.edu.javeriana.sv_patients.DTO.ActividadDTO;
 import co.edu.javeriana.sv_patients.DTO.PacienteDTO;
@@ -159,13 +158,14 @@ public class PacienteController {
             pacienteDTO.setTelefono(paciente.getTelefono());
             pacienteDTO.setNumeroIdentificacion(paciente.getNumero_identificacion());
             pacienteDTO.setNombreAcudiente(paciente.getNombre_acudiente());
-            pacienteDTO.setParentezcoAcudiente(paciente.getParentezco_acudiente());
             pacienteDTO.setTelefonoAcudiente(paciente.getTelefono_acudiente());
+            pacienteDTO.setTelefonoAcudiente2(paciente.getTelefono_acudiente2());
             pacienteDTO.setBarrio(paciente.getBarrio());
             pacienteDTO.setConjunto(paciente.getConjunto());
             pacienteDTO.setLocalidad(paciente.getLocalidad());
             pacienteDTO.setLatitud(paciente.getLatitud());
             pacienteDTO.setLongitud(paciente.getLongitud());
+            pacienteDTO.setEstado(paciente.getEstado());
 
             TipoIdentificacionDTO tipoDTO = new TipoIdentificacionDTO();
             tipoDTO.setId(paciente.getTipoIdentificacion().getId());
@@ -185,6 +185,8 @@ public class PacienteController {
             }).toList();
 
             pacienteDTO.setActividades(actividades);
+
+            System.out.println("RESPUESTA: " + pacienteDTO.getTelefonoAcudiente2());
 
             return ResponseEntity.ok(pacienteDTO);
 

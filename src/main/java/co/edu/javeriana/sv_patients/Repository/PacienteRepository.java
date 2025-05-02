@@ -9,12 +9,15 @@ import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Entity.TipoIdentificacionEntity;
 
 @Repository
-public interface  PacienteRepository extends JpaRepository<PacienteEntity, Long> {
+public interface PacienteRepository extends JpaRepository<PacienteEntity, Long> {
+
     Optional<PacienteEntity> findById(Long id);
-    
+
     boolean existsByTipoIdentificacionAndNumeroIdentificacion(
-    TipoIdentificacionEntity tipoIdentificacion,
-    String numeroIdentificacion
-);
+            TipoIdentificacionEntity tipoIdentificacion,
+            String numeroIdentificacion
+    );
+
+    Optional<PacienteEntity> findByNumeroIdentificacion(String numeroIdentificacion);
 
 }
