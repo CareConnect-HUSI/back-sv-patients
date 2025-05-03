@@ -214,7 +214,6 @@ public class PacienteController {
             pacienteExistente.setLatitud(paciente.getLatitud());
             pacienteExistente.setLongitud(paciente.getLongitud());
 
-            // ✅ NUEVO
             if (paciente.getTipoIdentificacion() != null && paciente.getTipoIdentificacion().getId() != null) {
                 TipoIdentificacionEntity tipo = tipoIdentificacionRepository.findById(
                         paciente.getTipoIdentificacion().getId()
@@ -228,6 +227,15 @@ public class PacienteController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con id: " + id);
         }
+    }
+
+    @GetMapping("/tipos-identificacion")
+    public ResponseEntity<List<TipoIdentificacionDTO>> obtenerTiposIdentificacion() {
+        List<TipoIdentificacionEntity> tipos = tipoIdentificacionRepository.findAll();
+        List<TipoIdentificacionDTO> tiposDTO = tipos.stream()
+                .map(t -> new TipoIdentificacionDTO(t.getId(), t.getName()))
+                .toList();
+        return ResponseEntity.ok(tiposDTO);
     }
 
 }
