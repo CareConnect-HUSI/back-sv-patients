@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +39,7 @@ import co.edu.javeriana.sv_patients.Service.PacienteService;
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
-    
+
     @Autowired
     private PacienteService pacienteService;
 
@@ -109,7 +110,6 @@ public class PacienteController {
             throw new IllegalArgumentException("Error al obtener latitud y longitud.");
         }
 
-
         PacienteEntity pacienteGuardado = pacienteRepository.save(paciente);
 
         if (paciente.getActividades() != null) {
@@ -118,8 +118,8 @@ public class PacienteController {
 
                 ActividadEntity actividadEntity = actividadRepository.findById(
                         actividad.getActividad().getId()
-                ).orElseThrow(() ->
-                        new RuntimeException("Actividad con ID " + actividad.getActividad().getId() + " no encontrada")
+                ).orElseThrow(()
+                        -> new RuntimeException("Actividad con ID " + actividad.getActividad().getId() + " no encontrada")
                 );
 
                 actividad.setActividad(actividadEntity);
@@ -134,8 +134,8 @@ public class PacienteController {
     //http://localhost:8081/pacientes
     @GetMapping
     public ResponseEntity<Page<PacienteEntity>> obtenerPacientesPaginados(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PacienteEntity> pacientes = pacienteRepository.findAll(pageable);
@@ -149,7 +149,7 @@ public class PacienteController {
         if (pacienteOpt.isPresent()) {
             PacienteEntity paciente = pacienteOpt.get();
             paciente.getActividades().size();
-            
+
             PacienteDTO pacienteDTO = new PacienteDTO();
             pacienteDTO.setId(paciente.getId());
             pacienteDTO.setNombre(paciente.getNombre());
@@ -186,13 +186,48 @@ public class PacienteController {
 
             pacienteDTO.setActividades(actividades);
 
-            System.out.println("RESPUESTA: " + pacienteDTO.getTelefonoAcudiente2());
-
             return ResponseEntity.ok(pacienteDTO);
 
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con id: " + id);
         }
     }
-}
 
+    //http://localhost:8081/pacientes/actualizar-paciente/1
+    @PutMapping("/actualizar-paciente/{id}")
+    public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteEntity paciente) {
+        Optional<PacienteEntity> pacienteOpt = pacienteRepository.findById(id);
+        if (pacienteOpt.isPresent()) {
+            PacienteEntity pacienteExistente = pacienteOpt.get();
+
+            pacienteExistente.setNombre(paciente.getNombre());
+            pacienteExistente.setApellido(paciente.getApellido());
+            pacienteExistente.setDireccion(paciente.getDireccion());
+            pacienteExistente.setTelefono(paciente.getTelefono());
+            pacienteExistente.setNumero_identificacion(paciente.getNumero_identificacion());
+            pacienteExistente.setNombre_acudiente(paciente.getNombre_acudiente());
+            pacienteExistente.setTelefono_acudiente(paciente.getTelefono_acudiente());
+            pacienteExistente.setTelefono_acudiente2(paciente.getTelefono_acudiente2());
+            pacienteExistente.setBarrio(paciente.getBarrio());
+            pacienteExistente.setConjunto(paciente.getConjunto());
+            pacienteExistente.setLocalidad(paciente.getLocalidad());
+            pacienteExistente.setLatitud(paciente.getLatitud());
+            pacienteExistente.setLongitud(paciente.getLongitud());
+
+            // ✅ NUEVO
+            if (paciente.getTipoIdentificacion() != null && paciente.getTipoIdentificacion().getId() != null) {
+                TipoIdentificacionEntity tipo = tipoIdentificacionRepository.findById(
+                        paciente.getTipoIdentificacion().getId()
+                ).orElseThrow(() -> new IllegalArgumentException("Tipo de identificación no válido"));
+
+                pacienteExistente.setTipoIdentificacion(tipo);
+            }
+
+            PacienteEntity pacienteActualizado = pacienteRepository.save(pacienteExistente);
+            return ResponseEntity.ok(pacienteActualizado);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con id: " + id);
+        }
+    }
+
+}
