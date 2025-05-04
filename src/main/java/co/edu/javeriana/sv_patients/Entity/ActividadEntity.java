@@ -26,6 +26,7 @@ public class ActividadEntity {
     private Long id;
     private String name;
     
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tipo_actividad_id", nullable = false)
     private TipoActividadEntity tipoActividad;
@@ -34,6 +35,7 @@ public class ActividadEntity {
     @JsonIgnore
     private List<ActividadPacienteVisita> actividades;
 
+    private String estado;
     private String descripcion;
     private Integer cantidad;
     @Column(name = "fecha_registro", updatable = false, insertable = false)
@@ -103,5 +105,12 @@ public class ActividadEntity {
 
     public void setActividades(List<ActividadPacienteVisita> actividades) {
         this.actividades = actividades;
+    }
+    public String getEstado() {
+        return estado;
+    }
+    
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }
