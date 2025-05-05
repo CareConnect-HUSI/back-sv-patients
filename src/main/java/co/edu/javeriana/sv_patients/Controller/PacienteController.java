@@ -213,6 +213,7 @@ public class PacienteController {
             pacienteExistente.setLocalidad(paciente.getLocalidad());
             pacienteExistente.setLatitud(paciente.getLatitud());
             pacienteExistente.setLongitud(paciente.getLongitud());
+            pacienteExistente.setEstado(paciente.getEstado());
 
             if (paciente.getTipoIdentificacion() != null && paciente.getTipoIdentificacion().getId() != null) {
                 TipoIdentificacionEntity tipo = tipoIdentificacionRepository.findById(
