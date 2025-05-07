@@ -11,6 +11,8 @@ public class ActividadDTO {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private LocalTime hora;
+    private Long id;
+    private Long actividadId;
 
     public ActividadDTO() {
     }
@@ -80,5 +82,21 @@ public class ActividadDTO {
 
     public void setHora(LocalTime hora) {
         this.hora = hora;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getActividadId(){
+        return actividadId;
+    }
+
+    public void setActividadId(Long id){
+        this.actividadId = id;
     }
 }

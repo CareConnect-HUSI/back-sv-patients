@@ -88,6 +88,7 @@ public ResponseEntity<?> obtenerActividadesPorDocumento(@PathVariable String doc
         List<ActividadPacienteVisita> actividades = actividadPacienteVisitaRepository.findByPacienteId(paciente.getId());
 
         List<Map<String, Object>> response = actividades.stream().map(a -> Map.of(
+            "idRelacion", a.getId(),
             "nombreActividad", (Object) a.getActividad().getName(),
             "dosis", (Object) a.getDosis(),
             "frecuencia", (Object) a.getFrecuencia(),

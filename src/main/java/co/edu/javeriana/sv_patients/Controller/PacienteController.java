@@ -1,5 +1,6 @@
 package co.edu.javeriana.sv_patients.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import co.edu.javeriana.sv_patients.Entity.TipoIdentificacionEntity;
 import co.edu.javeriana.sv_patients.Repository.ActividadPacienteVisitaRepository;
 import co.edu.javeriana.sv_patients.Repository.ActividadRepository;
 import co.edu.javeriana.sv_patients.Repository.PacienteRepository;
+import co.edu.javeriana.sv_patients.Repository.TipoActividadRepository;
 import co.edu.javeriana.sv_patients.Repository.TipoIdentificacionRepository;
 import co.edu.javeriana.sv_patients.Service.PacienteService;
 
@@ -54,6 +56,9 @@ public class PacienteController {
 
     @Autowired
     private ActividadPacienteVisitaRepository actividadPacienteVisitaRepository;
+
+    @Autowired
+    private TipoActividadRepository tipoActividadRepository;
 
     // http://localhost:8081/pacientes/registrar-paciente
     @PostMapping("/registrar-paciente")
@@ -174,7 +179,9 @@ public class PacienteController {
 
             List<ActividadDTO> actividades = paciente.getActividades().stream().map(actividad -> {
                 ActividadDTO act = new ActividadDTO();
+                act.setId(actividad.getId());
                 act.setNombreActividad(actividad.getActividad().getName());
+                act.setActividadId(actividad.getActividad().getId());
                 act.setDosis(actividad.getDosis());
                 act.setFrecuencia(actividad.getFrecuencia());
                 act.setDiasTratamiento(actividad.getDiasTratamiento());
@@ -239,4 +246,19 @@ public class PacienteController {
         return ResponseEntity.ok(tiposDTO);
     }
 
+    
+
+    @GetMapping("/tipos-actividad")
+    public ResponseEntity<List<Map<String, Object>>> obtenerTiposActividad() {
+        List<Map<String, Object>> tipos = tipoActividadRepository.findAll().stream()
+            .map(t -> {
+                Map<String, Object> tipoMap = new HashMap<>();
+                tipoMap.put("id", t.getId());
+                tipoMap.put("name", t.getName());
+                return tipoMap;
+            })
+            .toList();
+
+        return ResponseEntity.ok(tipos);
+    }
 }
