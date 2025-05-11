@@ -13,6 +13,7 @@ public class ActividadDTO {
     private LocalTime hora;
     private Long id;
     private Long actividadId;
+    private Long tipoActividadId;
 
     public ActividadDTO() {
     }
@@ -98,5 +99,13 @@ public class ActividadDTO {
 
     public void setActividadId(Long id){
         this.actividadId = id;
+    }
+
+    public Long getTipoActividadId(){
+        return tipoActividadId;
+    }
+
+    public void setTipoActividadId(Long id){
+        this.tipoActividadId = id;
     }
 }

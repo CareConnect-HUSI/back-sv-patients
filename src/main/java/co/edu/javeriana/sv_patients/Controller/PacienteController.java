@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,9 @@ public class PacienteController {
 
     @Autowired
     private TipoActividadRepository tipoActividadRepository;
+
+    @Autowired
+    private PacienteService enfermeraService;
 
     // http://localhost:8081/pacientes/registrar-paciente
     @PostMapping("/registrar-paciente")
@@ -188,6 +192,9 @@ public class PacienteController {
                 act.setFechaInicio(actividad.getFechaInicio());
                 act.setFechaFin(actividad.getFechaFin());
                 act.setHora(actividad.getHora());
+
+                 act.setTipoActividadId(actividad.getActividad().getTipoActividad().getId());
+                 
                 return act;
             }).toList();
 
@@ -261,4 +268,29 @@ public class PacienteController {
 
         return ResponseEntity.ok(tipos);
     }
+
+    //http://localhost:8088/enfermeras/localidades
+    @GetMapping("/localidades")
+    public ResponseEntity<?> getLocalidades() {
+        try {
+            return ResponseEntity.ok(enfermeraService.getLocalidades());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    //http://localhost:8088/enfermeras/barrio/1
+    @GetMapping("/barrios/{codigoLocalidad}")
+    public ResponseEntity<?> getBarrios(@PathVariable String codigoLocalidad) {
+        try {
+            return ResponseEntity.ok(enfermeraService.getBarrios(codigoLocalidad));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: " + e.getMessage());
+        }
+    }
+
+
 }

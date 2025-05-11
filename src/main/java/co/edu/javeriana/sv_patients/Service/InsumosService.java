@@ -8,9 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.edu.javeriana.sv_patients.Entity.ActividadEntity;
-import co.edu.javeriana.sv_patients.Entity.ActividadPacienteVisita;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import co.edu.javeriana.sv_patients.Entity.ActividadEntity;
 import co.edu.javeriana.sv_patients.Entity.InstalacionInsumosPacienteEntity;
 import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Repository.ActividadRepository;
@@ -51,10 +51,16 @@ public class InsumosService {
             throw new IllegalArgumentException("Documento cannot be null");
         }
 
+        System.out.println("ID: " + id);
+        System.out.println("Insumos: " + insumosRepository.findByPacienteId(id));
+
         Optional<PacienteEntity> pacienteOpt = pacienteRepository.findById(id);
         if (pacienteOpt.isEmpty()) {
             return List.of(); // Return empty list if patient not found
         }
+
+        System.out.println("Paciente: " + pacienteOpt.get());
+        System.out.println("Insumos: " + insumosRepository.findByPacienteId(pacienteOpt.get().getId()));
 
         return insumosRepository.findByPacienteId(pacienteOpt.get().getId());
     }

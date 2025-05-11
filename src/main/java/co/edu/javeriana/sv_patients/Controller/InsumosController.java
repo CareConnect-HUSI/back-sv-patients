@@ -1,13 +1,10 @@
 package co.edu.javeriana.sv_patients.Controller;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.javeriana.sv_patients.DTO.MedicamentoDTO;
-import co.edu.javeriana.sv_patients.DTO.MedicamentoRequestDTO;
-import co.edu.javeriana.sv_patients.Entity.ActividadPacienteVisita;
 import co.edu.javeriana.sv_patients.Entity.InstalacionInsumosPacienteEntity;
-import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Service.InsumosService;
 
 @RestController
@@ -47,6 +41,7 @@ public class InsumosController {
     // http://localhost:8081/insumos/medicamentos/{documento}
     @GetMapping("/medicamentos/{id}")
     public ResponseEntity<List<MedicamentoDTO>> getMedicamentos(@PathVariable Long id) {
+        
         List<InstalacionInsumosPacienteEntity> insumos = insumosService.findAllById(id);
     
     List<MedicamentoDTO> medicamentos = insumos.stream()
