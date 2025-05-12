@@ -14,6 +14,7 @@ public class ActividadDTO {
     private Long id;
     private Long actividadId;
     private Long tipoActividadId;
+    private Integer duracionVisita;
 
     public ActividadDTO() {
     }
@@ -107,5 +108,13 @@ public class ActividadDTO {
 
     public void setTipoActividadId(Long id){
         this.tipoActividadId = id;
+    }
+
+    public Integer getDuracionVisita() {
+        return duracionVisita;
+    }
+
+    public void setDuracionVisita(Integer duracionVisita) {
+        this.duracionVisita = duracionVisita;
     }
 }

@@ -192,9 +192,10 @@ public class PacienteController {
                 act.setFechaInicio(actividad.getFechaInicio());
                 act.setFechaFin(actividad.getFechaFin());
                 act.setHora(actividad.getHora());
+                act.setDuracionVisita(actividad.getDuracionVisita());
 
-                 act.setTipoActividadId(actividad.getActividad().getTipoActividad().getId());
-                 
+                act.setTipoActividadId(actividad.getActividad().getTipoActividad().getId());
+
                 return act;
             }).toList();
 
@@ -225,8 +226,6 @@ public class PacienteController {
             pacienteExistente.setBarrio(paciente.getBarrio());
             pacienteExistente.setConjunto(paciente.getConjunto());
             pacienteExistente.setLocalidad(paciente.getLocalidad());
-            pacienteExistente.setLatitud(paciente.getLatitud());
-            pacienteExistente.setLongitud(paciente.getLongitud());
             pacienteExistente.setEstado(paciente.getEstado());
 
             if (paciente.getTipoIdentificacion() != null && paciente.getTipoIdentificacion().getId() != null) {
@@ -235,6 +234,39 @@ public class PacienteController {
                 ).orElseThrow(() -> new IllegalArgumentException("Tipo de identificación no válido"));
 
                 pacienteExistente.setTipoIdentificacion(tipo);
+            }
+
+            // Enviar la solicitud HTTP al servicio de geocodificación
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+
+                Map<String, String> geocodeRequest = Map.of(
+                        "direccion", paciente.getDireccion(),
+                        "conjunto", paciente.getConjunto(),
+                        "barrio", paciente.getBarrio(),
+                        "ciudad", "Bogotá");
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Content-Type", "application/json");
+                HttpEntity<Map<String, String>> entity = new HttpEntity<>(geocodeRequest, headers);
+
+                ResponseEntity<Map> response = restTemplate.exchange(
+                        "http://0.0.0.0:8001/geocode", HttpMethod.POST, entity, Map.class);
+
+                if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                    Map<String, Object> responseBody = response.getBody();
+                    Double latitud = (Double) responseBody.get("latitud");
+                    Double longitud = (Double) responseBody.get("longitud");
+
+                    pacienteExistente.setLatitud(latitud);
+                    pacienteExistente.setLongitud(longitud);
+                } else {
+                    throw new IllegalArgumentException("No se pudo obtener latitud y longitud de la geocodificación.");
+                }
+            } catch (Exception e) {
+                System.err.println("Error al hacer la solicitud de geocodificación: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error al obtener latitud y longitud.");
             }
 
             PacienteEntity pacienteActualizado = pacienteRepository.save(pacienteExistente);
@@ -253,18 +285,16 @@ public class PacienteController {
         return ResponseEntity.ok(tiposDTO);
     }
 
-    
-
     @GetMapping("/tipos-actividad")
     public ResponseEntity<List<Map<String, Object>>> obtenerTiposActividad() {
         List<Map<String, Object>> tipos = tipoActividadRepository.findAll().stream()
-            .map(t -> {
-                Map<String, Object> tipoMap = new HashMap<>();
-                tipoMap.put("id", t.getId());
-                tipoMap.put("name", t.getName());
-                return tipoMap;
-            })
-            .toList();
+                .map(t -> {
+                    Map<String, Object> tipoMap = new HashMap<>();
+                    tipoMap.put("id", t.getId());
+                    tipoMap.put("name", t.getName());
+                    return tipoMap;
+                })
+                .toList();
 
         return ResponseEntity.ok(tipos);
     }
@@ -291,6 +321,5 @@ public class PacienteController {
                     .body("Error: " + e.getMessage());
         }
     }
-
 
 }

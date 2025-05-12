@@ -70,6 +70,7 @@ public ResponseEntity<?> obtenerActividadPorId(@PathVariable Long id) {
     actividadMap.put("fechaInicio", actividad.getFechaInicio());
     actividadMap.put("fechaFin", actividad.getFechaFin());
     actividadMap.put("hora", actividad.getHora());
+    actividadMap.put("duracionVisita", actividad.getDuracionVisita());
 
     if (actividad.getActividad() != null) {
         Map<String, Object> actividadInfo = new HashMap<>();
@@ -127,7 +128,8 @@ public ResponseEntity<?> obtenerActividadesPorDocumento(@PathVariable String doc
             "frecuencia", (Object) a.getFrecuencia(),
             "diasTratamiento", (Object) a.getDiasTratamiento(),
             "pacienteNombre", (Object) (paciente.getNombre() + " " + paciente.getApellido()),
-            "tipoActividadId", (Object) a.getActividad().getTipoActividad().getId()
+            "tipoActividadId", (Object) a.getActividad().getTipoActividad().getId(),
+            "duracionVisita", (Object) a.getDuracionVisita()
         )).toList();
 
         return ResponseEntity.ok(response);
