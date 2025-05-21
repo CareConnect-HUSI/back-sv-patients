@@ -1,6 +1,8 @@
 package co.edu.javeriana.sv_patients.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import co.edu.javeriana.sv_patients.Entity.InstalacionInsumosPacienteEntity;
 import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Repository.ActividadRepository;
 import co.edu.javeriana.sv_patients.Repository.InstalacionInsumosPacienteRepository;
+import co.edu.javeriana.sv_patients.Repository.InsumosConsumidosRepository;
 import co.edu.javeriana.sv_patients.Repository.PacienteRepository;
 
 @Service
@@ -30,6 +33,9 @@ public class InsumosService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private InsumosConsumidosRepository insumosConsumidosRepository;
 
     public InstalacionInsumosPacienteEntity save(InstalacionInsumosPacienteEntity insumo) {
 
@@ -96,6 +102,42 @@ public class InsumosService {
                     ? (Integer) payload.get("cantidad")
                     : Integer.parseInt(payload.get("cantidad").toString()));
         }
+
+        return insumosRepository.save(insumo);
+    }
+
+    //Obtener los insumos consumidos por un paciente (actividad paciente visita)
+    public List<Map<String, Object>> obtenerInventarioConConsumoPorPaciente(Long pacienteId) {
+        List<InstalacionInsumosPacienteEntity> instalaciones = insumosRepository.findByPacienteId(pacienteId);
+        
+        List<Map<String, Object>> resultado = new ArrayList<>();
+
+        for (InstalacionInsumosPacienteEntity insumo : instalaciones) {
+            Long idInstalacion = insumo.getId();
+            Long cantidadInstalada = insumo.getCantidad_disponible() != null ? insumo.getCantidad_disponible().longValue() : 0L;
+            Long cantidadUsada = insumosConsumidosRepository.cantidadConsumidaPorInstalacion(idInstalacion);
+            if (cantidadUsada == null) {
+                cantidadUsada = 0L;
+            }
+
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", insumo.getId());
+            item.put("nombre", insumo.getActividad().getName());
+            item.put("cantidadTotal", cantidadInstalada);
+            item.put("cantidadUsada", cantidadUsada);
+            item.put("cantidadDisponible", cantidadInstalada - cantidadUsada);
+
+            resultado.add(item);
+        }
+
+        return resultado;
+    }
+
+    public InstalacionInsumosPacienteEntity actualizarInsumo(Long id, Integer nuevaCantidad) {
+        InstalacionInsumosPacienteEntity insumo = insumosRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Insumo no encontrado con ID: " + id));
+
+        insumo.setCantidad_disponible(nuevaCantidad);
 
         return insumosRepository.save(insumo);
     }
