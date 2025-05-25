@@ -99,7 +99,7 @@ public class PacienteController {
 
             // Hacer la solicitud POST a la URL geocode
             ResponseEntity<Map> response = restTemplate.exchange(
-                    "http://0.0.0.0:8001/geocode", HttpMethod.POST, entity, Map.class);
+                    "http://coordenadas:8001/geocode", HttpMethod.POST, entity, Map.class);
 
             // Verificar si la respuesta tiene latitud y longitud
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
@@ -251,7 +251,7 @@ public class PacienteController {
                 HttpEntity<Map<String, String>> entity = new HttpEntity<>(geocodeRequest, headers);
 
                 ResponseEntity<Map> response = restTemplate.exchange(
-                        "http://0.0.0.0:8001/geocode", HttpMethod.POST, entity, Map.class);
+                        "http://coordenadas:8001/geocode", HttpMethod.POST, entity, Map.class);
 
                 if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                     Map<String, Object> responseBody = response.getBody();
