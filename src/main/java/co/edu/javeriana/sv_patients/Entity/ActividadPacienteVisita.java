@@ -3,7 +3,10 @@ package co.edu.javeriana.sv_patients.Entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import org.hibernate.type.descriptor.jdbc.LocalTimeJdbcType;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -35,13 +38,19 @@ public class ActividadPacienteVisita {
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
 
-    @ManyToOne
-    @JoinColumn(name = "paciente_id", nullable = false)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id")
+    @JsonBackReference
     private PacienteEntity paciente;
 
+
+
     @ManyToOne
-    @JoinColumn(name = "actividad_id", nullable = false)
+    @JoinColumn(name = "actividad_id")
     private ActividadEntity actividad;
+
+
 
 
     @Column(name = "hora")
@@ -141,4 +150,7 @@ public class ActividadPacienteVisita {
     public void setActividad(ActividadEntity actividad) {
         this.actividad = actividad;
     }
+
 }
+
+

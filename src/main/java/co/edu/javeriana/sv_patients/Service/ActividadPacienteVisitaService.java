@@ -84,6 +84,9 @@ public class ActividadPacienteVisitaService {
     public ActividadPacienteVisita actualizarActividadPacienteVisita(Long id, ActividadPacienteVisita actividadPacienteVisitaActualizada) {
         ActividadPacienteVisita actividadPacienteVisita = obtenerActividadPacienteVisitaPorId(id);
         if (actividadPacienteVisita != null) {
+
+            actividadPacienteVisita.setId(id);
+
             actividadPacienteVisita.setDosis(actividadPacienteVisitaActualizada.getDosis());
             actividadPacienteVisita.setFrecuencia(actividadPacienteVisitaActualizada.getFrecuencia());
             actividadPacienteVisita.setDiasTratamiento(actividadPacienteVisitaActualizada.getDiasTratamiento());
@@ -91,13 +94,27 @@ public class ActividadPacienteVisitaService {
             actividadPacienteVisita.setFechaFin(actividadPacienteVisitaActualizada.getFechaFin());
             actividadPacienteVisita.setHora(actividadPacienteVisitaActualizada.getHora());
             actividadPacienteVisita.setDuracionVisita(actividadPacienteVisitaActualizada.getDuracionVisita());
+
+            actividadPacienteVisita.setActividad(
+                actividadRepository.findById(actividadPacienteVisitaActualizada.getActividad().getId())
+                    .orElseThrow(() -> new RuntimeException("Actividad no encontrada con ID: " + actividadPacienteVisitaActualizada.getActividad().getId()))
+            );
+    
+            actividadPacienteVisita.setPaciente(
+                pacienteRepository.findById(actividadPacienteVisitaActualizada.getPaciente().getId())
+                    .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + actividadPacienteVisitaActualizada.getPaciente().getId()))
+            );
+                
+
             return actividadPacienteVisitaRepository.save(actividadPacienteVisita);
         }
         return null;
     }
+
 
     public void eliminarActividadPacienteVisita(Long id) {
         actividadPacienteVisitaRepository.deleteById(id);
     }
 
 }
+
