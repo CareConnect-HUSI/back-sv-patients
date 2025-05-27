@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import org.hibernate.type.descriptor.jdbc.LocalTimeJdbcType;
+
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
@@ -34,6 +38,7 @@ public class ActividadPacienteVisita {
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_id")
     @JsonBackReference
@@ -44,6 +49,7 @@ public class ActividadPacienteVisita {
     @ManyToOne
     @JoinColumn(name = "actividad_id")
     private ActividadEntity actividad;
+
 
 
 
@@ -144,4 +150,7 @@ public class ActividadPacienteVisita {
     public void setActividad(ActividadEntity actividad) {
         this.actividad = actividad;
     }
+
 }
+
+

@@ -1,9 +1,11 @@
 package co.edu.javeriana.sv_patients.Controller;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.javeriana.sv_patients.Entity.ActividadPacienteVisita;
+
 import co.edu.javeriana.sv_patients.Entity.PacienteEntity;
 import co.edu.javeriana.sv_patients.Repository.ActividadPacienteVisitaRepository;
 import co.edu.javeriana.sv_patients.Repository.PacienteRepository;
+
 import co.edu.javeriana.sv_patients.Service.ActividadPacienteVisitaService;
 
 @RestController
@@ -56,6 +60,7 @@ public class ActividadPacienteVisitaController {
 
     //http://localhost:8081/actividad-paciente-visita/listar/1
     @GetMapping("/listar/{id}")
+
 public ResponseEntity<?> obtenerActividadPorId(@PathVariable Long id) {
     ActividadPacienteVisita actividad = actividadPacienteVisitaService.obtenerActividadPacienteVisitaPorId(id);
     if (actividad == null) {
@@ -113,6 +118,7 @@ public ResponseEntity<?> obtenerActividadPorId(@PathVariable Long id) {
         return ResponseEntity.noContent().build();
     }
 
+
     //http://localhost:8081/actividad-paciente-visita/por-documento/123456789
     @GetMapping("/por-documento/{documento}")
 public ResponseEntity<?> obtenerActividadesPorDocumento(@PathVariable String documento) {
@@ -139,3 +145,4 @@ public ResponseEntity<?> obtenerActividadesPorDocumento(@PathVariable String doc
 }
 
 }
+
